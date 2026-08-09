@@ -196,29 +196,19 @@
     #view-income>.view-title,#view-income>.daynav,#view-income>.add-trip,
     #view-income>#tripForm,#view-income>#tripList{grid-column:1/-1}
   }
-  /* fold-responsive */
-  @media (min-width:600px){
-    body{max-width:900px}
-    nav{max-width:900px}
-    .wrap{padding:26px 26px 24px}
-    #list,#habitList,#tripList{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
-    #view-focus .card:first-of-type{max-width:480px;margin-left:auto;margin-right:auto}
-    .summary{max-width:520px}
-    #tripForm{max-width:560px}
-    .add-trip{max-width:560px}
-  }
-  @media (min-width:1040px){
-    body{max-width:1080px}
-    nav{max-width:1080px}
-    #list{grid-template-columns:1fr 1fr 1fr}
-    #habitList,#tripList{grid-template-columns:1fr 1fr 1fr}
-  }
-  /* foldable hinge awareness (progressive) */
-  @media (horizontal-viewport-segments:2){
-    body{max-width:100%}
-    .wrap{padding-left:max(26px,env(viewport-segment-width 0 0,26px));}
-  }
-
+  /* fold-responsive (JS-driven: reliable on foldable cold-launch) */
+  body.wide{max-width:900px}
+  body.wide nav{max-width:900px}
+  body.wide .wrap{padding:26px 26px 24px}
+  body.wide #list,body.wide #habitList,body.wide #tripList{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+  body.wide #view-focus .card:first-of-type{max-width:480px;margin-left:auto;margin-right:auto}
+  body.wide .summary{max-width:520px}
+  body.wide #tripForm{max-width:560px}
+  body.wide .add-trip{max-width:560px}
+  body.xwide{max-width:1080px}
+  body.xwide nav{max-width:1080px}
+  body.xwide #list{grid-template-columns:1fr 1fr 1fr}
+  body.xwide #habitList,body.xwide #tripList{grid-template-columns:1fr 1fr 1fr}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -666,6 +656,12 @@
   rockInp.addEventListener("input",()=>store.set("rock:"+today(),rockInp.value));
   setMode(modeFor(new Date()));
   renderDump();drawTimer();
+  function applyWide(){var w=Math.max(window.innerWidth||0,document.documentElement.clientWidth||0);document.body.classList.toggle('wide',w>=600);document.body.classList.toggle('xwide',w>=1000);}
+  applyWide();
+  window.addEventListener('resize',applyWide);
+  window.addEventListener('orientationchange',function(){setTimeout(applyWide,60);setTimeout(applyWide,300);});
+  if(window.visualViewport){window.visualViewport.addEventListener('resize',applyWide);}
+  window.addEventListener('load',function(){applyWide();setTimeout(applyWide,150);setTimeout(applyWide,500);setTimeout(applyWide,1200);});
 })();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
