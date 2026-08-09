@@ -654,14 +654,19 @@
   rockInp.addEventListener("input",()=>store.set("rock:"+today(),rockInp.value));
   setMode(modeFor(new Date()));
   renderDump();drawTimer();
-  function applyWide(){var w=Math.max(window.innerWidth||0,document.documentElement.clientWidth||0);document.body.classList.toggle('wide',w>=600);document.body.classList.toggle('xwide',w>=1000);}
-  applyWide();
-  window.addEventListener('resize',applyWide);
-  window.addEventListener('orientationchange',function(){setTimeout(applyWide,60);setTimeout(applyWide,300);});
-  if(window.visualViewport){window.visualViewport.addEventListener('resize',applyWide);}
-  window.addEventListener('load',function(){applyWide();setTimeout(applyWide,150);setTimeout(applyWide,500);setTimeout(applyWide,1200);});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden){applyWide();setTimeout(applyWide,80);}});
-  window.addEventListener('pageshow',function(){applyWide();setTimeout(applyWide,80);});
+  function setWide(w){document.body.classList.toggle('wide',w>=600);document.body.classList.toggle('xwide',w>=1000);}
+  function measure(){setWide(Math.max(window.innerWidth||0,document.documentElement.clientWidth||0,(window.visualViewport&&window.visualViewport.width)||0));}
+  measure();
+  if('ResizeObserver' in window){
+    var ro=new ResizeObserver(function(e){var w=(e[0]&&e[0].contentRect)?e[0].contentRect.width:0;setWide(Math.max(w,window.innerWidth||0,document.documentElement.clientWidth||0));});
+    ro.observe(document.documentElement);
+  }
+  window.addEventListener('resize',measure);
+  window.addEventListener('orientationchange',function(){setTimeout(measure,60);setTimeout(measure,300);});
+  if(window.visualViewport){window.visualViewport.addEventListener('resize',measure);}
+  window.addEventListener('load',function(){measure();setTimeout(measure,200);setTimeout(measure,700);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){measure();setTimeout(measure,80);}});
+  window.addEventListener('pageshow',function(){measure();setTimeout(measure,80);});
 })();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
