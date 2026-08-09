@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#100E0A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="روتيني">
+<title>روتين اليوم — ياسر</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"روتين اليوم","short_name":"روتيني","start_url":".","scope":".","display":"standalone","orientation":"portrait","background_color":"%23100E0A","theme_color":"%23100E0A","dir":"rtl","lang":"ar","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect width=%27192%27 height=%27192%27 rx=%2742%27 fill=%27%23100E0A%27/%3E%3Ccircle cx=%2796%27 cy=%2796%27 r=%2752%27 fill=%27none%27 stroke=%27%23D8B15A%27 stroke-width=%278%27/%3E%3Cpath d=%27M74 96l16 16 30-34%27 fill=%27none%27 stroke=%27%23D8B15A%27 stroke-width=%279%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"}]}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#100E0A; --bg-soft:#17140E; --card:#1D1913; --card-2:#231E16;
+    --line:#312A1E; --gold:#D8B15A; --gold-soft:#E7CE8C; --gold-deep:#8C7238;
+    --text:#EDE7D8; --muted:#9C9280; --dim:#6E6656; --done:#5E7A55; --warn:#C98A4B;
+    --shadow:0 18px 40px -24px rgba(0,0,0,.9);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg);color:var(--text);font-family:"Tajawal",system-ui,sans-serif}
+  body{max-width:560px;margin:0 auto;min-height:100vh;padding:0 0 92px;
+    background:radial-gradient(120% 55% at 100% 0%,rgba(216,177,90,.07),transparent 60%),var(--bg)}
+  .wrap{padding:22px 18px 20px}
+  h2.view-title{font-family:"Reem Kufi";font-weight:600;font-size:1.15rem;margin-bottom:14px;color:var(--gold-soft)}
+  .hidden{display:none!important}
+
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+  .top .date{font-family:"Reem Kufi";font-weight:600;font-size:1.24rem;line-height:1.3}
+  .top .sub{color:var(--muted);font-size:.82rem;margin-top:3px}
+  .ring{position:relative;width:60px;height:60px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .track{stroke:var(--line);fill:none;stroke-width:6}
+  .ring .fill{stroke:var(--gold);fill:none;stroke-width:6;stroke-linecap:round;
+    stroke-dasharray:169.6;stroke-dashoffset:169.6;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+  .ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:"Reem Kufi";font-weight:700;font-size:.9rem;color:var(--gold-soft)}
+
+  .rock{background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--gold-deep);
+    border-radius:18px;padding:15px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:16px}
+  .rock::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(var(--gold),var(--gold-deep))}
+  .rock .lbl{display:flex;align-items:center;gap:7px;color:var(--gold-soft);font-family:"Reem Kufi";font-weight:600;font-size:.9rem;margin-bottom:8px}
+  .rock .lbl .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .rock input{width:100%;background:transparent;border:none;color:var(--text);font-family:"Tajawal";font-weight:500;font-size:1.05rem;outline:none}
+  .rock input::placeholder{color:var(--dim)}
+  .rock .hint{color:var(--muted);font-size:.73rem;margin-top:6px}
+
+  .tabs{display:flex;gap:8px;background:var(--bg-soft);border:1px solid var(--line);padding:5px;border-radius:14px;margin-bottom:16px}
+  .tabs button{flex:1;border:none;background:transparent;color:var(--muted);font-family:"Tajawal";font-weight:700;font-size:.9rem;padding:9px;border-radius:10px;cursor:pointer;transition:.25s}
+  .tabs button.active{background:var(--card-2);color:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-deep)}
+
+  #list{display:flex;flex-direction:column;gap:10px}
+  .block{display:flex;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:.28s}
+  .block:active{transform:scale(.992)}
+  .block .rail{width:4px;background:var(--line);flex-shrink:0;transition:.28s}
+  .block .body{flex:1;display:flex;align-items:center;gap:12px;padding:12px 14px}
+  .block .time{font-family:"Reem Kufi";font-weight:600;font-size:.71rem;color:var(--gold);background:rgba(216,177,90,.09);
+    border:1px solid var(--gold-deep);border-radius:8px;padding:5px 7px;min-width:80px;text-align:center;line-height:1.35;flex-shrink:0}
+  .block .txt{flex:1}
+  .block .txt .t{font-weight:500;font-size:.98rem;line-height:1.35}
+  .block .txt .d{color:var(--muted);font-size:.77rem;margin-top:2px}
+  .block .check{width:26px;height:26px;border-radius:50%;border:2px solid var(--dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.25s}
+  .block .check svg{width:14px;height:14px;stroke:var(--bg);stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:.3s}
+  .block.done .rail{background:var(--done)}
+  .block.done .check{background:var(--done);border-color:var(--done)}
+  .block.done .check svg{stroke-dashoffset:0}
+  .block.done .txt .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--dim)}
+  .block.done .time{opacity:.5}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+  .card h3{font-family:"Reem Kufi";font-weight:600;font-size:1rem;margin-bottom:12px;color:var(--gold-soft);display:flex;align-items:center;gap:8px}
+
+  .dump-in{display:flex;gap:8px;margin-bottom:12px}
+  .dump-in input{flex:1;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;color:var(--text);font-family:"Tajawal";font-size:.95rem;padding:11px 12px;outline:none}
+  .dump-in input:focus{border-color:var(--gold-deep)}
+  .dump-in button{background:var(--gold);color:#1a1509;border:none;border-radius:11px;font-family:"Tajawal";font-weight:700;font-size:.95rem;padding:0 16px;cursor:pointer}
+  .dump-list{display:flex;flex-direction:column;gap:8px}
+  .dump-item{display:flex;align-items:center;gap:10px;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+  .dump-item span{flex:1;font-size:.92rem}
+  .dump-item button{background:none;border:none;color:var(--dim);font-size:1.2rem;cursor:pointer;line-height:1;padding:0 4px}
+  .empty{color:var(--dim);font-size:.85rem;text-align:center;padding:10px 0}
+
+  .timer-wrap{text-align:center;padding:6px 0 4px}
+  .timer{font-family:"Reem Kufi";font-weight:700;font-size:3.6rem;letter-spacing:2px;color:var(--gold-soft);line-height:1}
+  .timer.break{color:var(--done)}
+  .timer-lbl{color:var(--muted);font-size:.85rem;margin-top:6px}
+  .t-task{width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;color:var(--text);font-family:"Tajawal";font-size:.95rem;padding:11px 12px;outline:none;margin:14px 0}
+  .t-task:focus{border-color:var(--gold-deep)}
+  .t-presets{display:flex;gap:8px;margin-bottom:14px}
+  .t-presets button{flex:1;background:var(--bg-soft);border:1px solid var(--line);color:var(--muted);font-family:"Tajawal";font-weight:600;font-size:.85rem;padding:9px;border-radius:10px;cursor:pointer}
+  .t-presets button.active{border-color:var(--gold-deep);color:var(--gold-soft);background:var(--card-2)}
+  .t-ctrls{display:flex;gap:10px}
+  .t-ctrls button{flex:1;border:1px solid var(--line);background:var(--card-2);color:var(--text);font-family:"Tajawal";font-weight:700;font-size:1rem;padding:13px;border-radius:12px;cursor:pointer;transition:.2s}
+  .t-ctrls button.primary{background:var(--gold);color:#1a1509;border-color:var(--gold)}
+  .t-count{text-align:center;color:var(--muted);font-size:.85rem;margin-top:14px}
+  .t-count b{color:var(--gold-soft);font-family:"Reem Kufi"}
+
+  .habit{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:.2s}
+  .habit:active{transform:scale(.992)}
+  .habit .ico{font-size:1.5rem;width:30px;text-align:center}
+  .habit .hmain{flex:1}
+  .habit .hname{font-weight:500;font-size:.98rem}
+  .habit .week{display:flex;gap:4px;margin-top:6px}
+  .habit .week i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block}
+  .habit .week i.on{background:var(--done)}
+  .habit .streak{font-family:"Reem Kufi";font-weight:700;font-size:1.05rem;color:var(--dim);min-width:44px;text-align:center}
+  .habit.today .streak{color:var(--gold-soft)}
+  .habit .mark{width:26px;height:26px;border-radius:50%;border:2px solid var(--dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s}
+  .habit.today .mark{background:var(--gold);border-color:var(--gold)}
+  .habit.today .mark::after{content:"✓";color:#1a1509;font-weight:900;font-size:.85rem}
+
+  /* ---- income / trips ---- */
+  .daynav{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .daynav>button{background:var(--card-2);border:1px solid var(--line);color:var(--text);font-family:"Tajawal";font-weight:700;font-size:.82rem;padding:11px 10px;border-radius:11px;cursor:pointer;white-space:nowrap}
+  .daynav>button:active{background:var(--card)}
+  .daynav-mid{flex:1;text-align:center}
+  .daynav-mid .dl{font-family:"Reem Kufi";font-weight:600;font-size:1.02rem;color:var(--gold-soft)}
+  .today-jump{margin-top:3px;background:none;border:none;color:var(--gold);font-size:.74rem;cursor:pointer;text-decoration:underline}
+  .summary .big{font-family:"Reem Kufi";font-weight:700;font-size:2.1rem;color:var(--gold-soft);line-height:1}
+  .summary .sline{display:flex;justify-content:space-between;color:var(--muted);font-size:.82rem;margin-top:8px}
+  .bar{height:12px;background:var(--bg-soft);border-radius:8px;overflow:hidden;border:1px solid var(--line);margin:12px 0 6px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-deep),var(--gold));transition:width .5s;border-radius:8px}
+  .brk{display:flex;gap:8px;margin-top:14px}
+  .brk .b{flex:1;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:10px 6px;text-align:center}
+  .brk .b .bv{font-family:"Reem Kufi";font-weight:700;font-size:1rem;color:var(--text)}
+  .brk .b .bl{font-size:.68rem;color:var(--muted);margin-top:3px}
+  .add-trip{width:100%;background:var(--gold);color:#1a1509;border:none;border-radius:13px;font-family:"Tajawal";font-weight:700;font-size:1.02rem;padding:14px;margin-bottom:14px;cursor:pointer}
+  .add-trip:active{opacity:.85}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px}
+  .chips button{background:var(--bg-soft);border:1px solid var(--line);color:var(--muted);font-family:"Tajawal";font-weight:600;font-size:.85rem;padding:9px 12px;border-radius:10px;cursor:pointer;transition:.2s}
+  .chips button.sel{border-color:var(--gold);color:var(--gold-soft);background:var(--card-2)}
+  .flabel{display:block;font-size:.82rem;color:var(--muted);margin-top:14px;margin-bottom:2px}
+  .finput{width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;color:var(--text);font-family:"Reem Kufi";font-weight:700;font-size:1.15rem;text-align:center;padding:11px;outline:none}
+  .finput:focus{border-color:var(--gold-deep)}
+  .two{display:flex;gap:10px}
+  .two>div{flex:1}
+  .form-ctrls{display:flex;gap:10px;margin-top:18px}
+  .form-ctrls button{flex:1;padding:13px;border-radius:12px;font-family:"Tajawal";font-weight:700;font-size:.95rem;cursor:pointer}
+  .form-ctrls .save{background:var(--gold);color:#1a1509;border:none}
+  .form-ctrls .cancel{background:var(--card-2);border:1px solid var(--line);color:var(--muted)}
+  .ferr{color:var(--warn);font-size:.8rem;margin-top:10px;text-align:center;min-height:1.1em}
+  .trip{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px;margin-bottom:9px}
+  .trip .app{font-family:"Reem Kufi";font-weight:700;font-size:.72rem;padding:6px 7px;border-radius:8px;min-width:66px;text-align:center;flex-shrink:0}
+  .trip .tinfo{flex:1;min-width:0}
+  .trip .tamt{font-family:"Reem Kufi";font-weight:700;font-size:1.05rem;color:var(--gold-soft)}
+  .trip .tmeta{font-size:.74rem;color:var(--muted);margin-top:2px}
+  .trip .del{background:none;border:none;color:var(--dim);font-size:1.35rem;cursor:pointer;padding:0 4px;line-height:1}
+
+  .daybars{display:flex;justify-content:space-between;gap:6px;align-items:flex-end;height:120px;margin:6px 0 4px}
+  .daybar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+  .daybar .col{width:100%;background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;height:100%;overflow:hidden;display:flex;align-items:flex-end}
+  .daybar .col>i{width:100%;background:linear-gradient(var(--gold),var(--gold-deep));border-radius:5px;transition:height .5s}
+  .daybar .lbl{font-size:.68rem;color:var(--muted)}
+  .daybar.today .lbl{color:var(--gold-soft);font-weight:700}
+
+  .stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+  .stat-row:last-child{border-bottom:none}
+  .stat-row .v{font-family:"Reem Kufi";font-weight:700;color:var(--gold-soft)}
+
+  .reset{margin-top:6px;width:100%;background:transparent;border:1px solid var(--line);color:var(--dim);font-family:"Tajawal";font-size:.82rem;padding:11px;border-radius:12px;cursor:pointer}
+  .reset:active{background:var(--card)}
+
+  nav{position:fixed;bottom:0;left:0;right:0;max-width:560px;margin:0 auto;background:rgba(20,17,12,.94);
+    backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:20}
+  nav button{flex:1;background:none;border:none;color:var(--dim);font-family:"Tajawal";font-weight:600;font-size:.68rem;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px;transition:.2s}
+  nav button .ni{font-size:1.25rem;line-height:1}
+  nav button.active{color:var(--gold-soft)}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- اليوم -->
+<section id="view-today" class="wrap">
+  <div class="top">
+    <div><div class="date" id="dateLabel">—</div><div class="sub" id="dayType">—</div></div>
+    <div class="ring" aria-hidden="true">
+      <svg width="60" height="60"><circle class="track" cx="30" cy="30" r="27"/><circle class="fill" id="ringFill" cx="30" cy="30" r="27"/></svg>
+      <div class="pct" id="ringPct">0%</div>
+    </div>
+  </div>
+  <div class="rock">
+    <div class="lbl"><span class="dot"></span>صخرة اليوم</div>
+    <input id="rock" type="text" placeholder="مهمة وحدة أهم من كل شي…" autocomplete="off">
+    <div class="hint">لو ما سويت غيرها اليوم — يومك نجح.</div>
+  </div>
+  <div class="tabs">
+    <button id="tabWeek" class="active" onclick="setMode('week')">يوم عمل</button>
+    <button id="tabEnd" onclick="setMode('end')">نهاية أسبوع</button>
+  </div>
+  <div id="list"></div>
+  <div class="card" style="margin-top:16px">
+    <h3>🧠 التقاط الشتات</h3>
+    <div class="dump-in">
+      <input id="dumpInput" type="text" placeholder="فكرة قاطعتك؟ ارميها هنا وارجع لشغلك" autocomplete="off">
+      <button onclick="addDump()">أضف</button>
+    </div>
+    <div class="dump-list" id="dumpList"></div>
+  </div>
+  <button class="reset" onclick="resetDay()">تصفير مهام اليوم</button>
+</section>
+
+<!-- تركيز -->
+<section id="view-focus" class="wrap hidden">
+  <h2 class="view-title">جلسة تركيز</h2>
+  <div class="card">
+    <div class="timer-wrap">
+      <div class="timer" id="timerDisp">25:00</div>
+      <div class="timer-lbl" id="timerLbl">جاهز للبدء</div>
+    </div>
+    <input class="t-task" id="focusTask" type="text" placeholder="على وش تشتغل الحين؟" autocomplete="off">
+    <div class="t-presets">
+      <button class="active" onclick="setPreset(this,25,5)">25 / 5</button>
+      <button onclick="setPreset(this,50,10)">50 / 10 (قصص)</button>
+    </div>
+    <div class="t-ctrls">
+      <button class="primary" id="btnStart" onclick="toggleTimer()">ابدأ</button>
+      <button onclick="resetTimer()">تصفير</button>
+    </div>
+    <div class="t-count">جلسات اليوم: <b id="pomoCount">0</b></div>
+  </div>
+  <div class="card" style="color:var(--muted);font-size:.85rem;line-height:1.7">شغّل المؤقّت وقت بلوك التركيز، وسكّر كل شي ثاني. جلسة وحدة صافية أثمن من ساعة مشتتة.</div>
+</section>
+
+<!-- عاداتي -->
+<section id="view-habits" class="wrap hidden">
+  <h2 class="view-title">عاداتي اليومية</h2>
+  <div id="habitList"></div>
+  <div class="card" style="color:var(--muted);font-size:.85rem;line-height:1.7">السلسلة 🔥 هي اللي تشدّك. لا تكسرها — ولو سويت الحد الأدنى، علّمها.</div>
+</section>
+
+<!-- الدخل / الرحلات -->
+<section id="view-income" class="wrap hidden">
+  <h2 class="view-title">سجل الرحلات</h2>
+  <div class="daynav">
+    <button onclick="shiftDay(-1)">‹ السابق</button>
+    <div class="daynav-mid">
+      <div class="dl" id="selDateLbl">—</div>
+      <button class="today-jump hidden" id="todayJump" onclick="goToday()">↩ ارجع لليوم</button>
+    </div>
+    <button onclick="shiftDay(1)">التالي ›</button>
+  </div>
+
+  <div class="card summary">
+    <div class="big"><span id="dayTotal">0</span> ريال</div>
+    <div class="sline"><span id="dayTripsCount">0 رحلات</span><span id="dayKm">0 كم</span></div>
+    <div class="bar"><i id="incBar" style="width:0%"></i></div>
+    <div class="sline"><span id="incPct">0%</span><span id="incTarget">الهدف: —</span></div>
+    <div class="brk">
+      <div class="b"><div class="bv" id="brkCash">0</div><div class="bl">كاش</div></div>
+      <div class="b"><div class="bv" id="brkNet">0</div><div class="bl">شبكة</div></div>
+      <div class="b"><div class="bv" id="brkApp">0</div><div class="bl">تطبيق</div></div>
+    </div>
+  </div>
+
+  <button class="add-trip" onclick="openTripForm()">＋ أضف رحلة</button>
+
+  <div id="tripForm" class="card hidden">
+    <h3>رحلة جديدة</h3>
+    <span class="flabel">التطبيق</span>
+    <div class="chips" id="appChips"></div>
+    <div id="amountBox">
+      <span class="flabel">المبلغ (ريال)</span>
+      <input id="tAmount" class="finput" type="number" inputmode="decimal" placeholder="0">
+    </div>
+    <div id="splitBox" class="hidden">
+      <div class="two">
+        <div><span class="flabel">منها كاش</span><input id="tCash" class="finput" type="number" inputmode="decimal" placeholder="0"></div>
+        <div><span class="flabel">منها تطبيق</span><input id="tApp" class="finput" type="number" inputmode="decimal" placeholder="0"></div>
+      </div>
+    </div>
+    <span class="flabel">المسافة (كم)</span>
+    <input id="tKm" class="finput" type="number" inputmode="decimal" placeholder="0">
+    <span class="flabel">طريقة الدفع</span>
+    <div class="chips" id="payChips"></div>
+    <div class="ferr" id="tripErr"></div>
+    <div class="form-ctrls">
+      <button class="save" onclick="saveTrip()">حفظ الرحلة</button>
+      <button class="cancel" onclick="closeTripForm()">إلغاء</button>
+    </div>
+  </div>
+
+  <div id="tripList"></div>
+
+  <div class="card">
+    <h3>💰 آخر 7 أيام</h3>
+    <div class="daybars" id="incBars"></div>
+  </div>
+</section>
+
+<!-- الأسبوع -->
+<section id="view-week" class="wrap hidden">
+  <h2 class="view-title">مراجعة الأسبوع</h2>
+  <div class="card"><h3>📊 التزامك بالروتين</h3><div class="daybars" id="weekBars"></div></div>
+  <div class="card"><h3>🔥 سلاسلك الحالية</h3><div id="streakSummary"></div></div>
+  <div class="card"><h3>📈 أرقام الأسبوع</h3>
+    <div class="stat-row"><span>متوسط الالتزام</span><span class="v" id="avgAdh">—</span></div>
+    <div class="stat-row"><span>إجمالي الدخل</span><span class="v" id="wkInc2">—</span></div>
+    <div class="stat-row"><span>عدد الرحلات</span><span class="v" id="wkTrips">—</span></div>
+    <div class="stat-row"><span>جلسات التركيز</span><span class="v" id="wkPomo">—</span></div>
+  </div>
+</section>
+
+<nav>
+  <button class="active" data-v="today" onclick="nav('today')"><span class="ni">☀️</span>اليوم</button>
+  <button data-v="focus" onclick="nav('focus')"><span class="ni">⏱️</span>تركيز</button>
+  <button data-v="habits" onclick="nav('habits')"><span class="ni">🔥</span>عاداتي</button>
+  <button data-v="income" onclick="nav('income')"><span class="ni">🚗</span>الرحلات</button>
+  <button data-v="week" onclick="nav('week')"><span class="ni">📊</span>الأسبوع</button>
+</nav>
+
+<script>
+(function(){
+  "use strict";
+
+  const ROUTINES={
+    week:[
+      {time:"الفجر",t:"صلاة + صفحتين قرآن + أذكار الصباح",d:"افتح يومك بالقرآن قبل الجوال"},
+      {time:"5:15",t:"مشي خفيف + اكتب صخرة اليوم",d:"حرّك جسمك وحدّد مهمة اليوم"},
+      {time:"6:00–9:30",t:"أوبر + استماع إنجليزي",d:"دخل الصباح ولغتك تتحسّن وأنت تسوق 🚗🎧"},
+      {time:"9:30",t:"فطور + راحة قصيرة",d:"عشر دقائق تنفّس، لا سكرول"},
+      {time:"10–12",t:"تركيز 1 — بناء القصص (حكاية)",d:"وقتك الذهبي للإبداع، الشي المهمل ياخذ أفضل طاقة"},
+      {time:"الظهر",t:"صلاة + غداء + قيلولة",d:"20 دقيقة نوم يشحنك للمساء"},
+      {time:"2–3:30",t:"تركيز 2 — مشاريع/تطبيقات أو تقديم",d:"الشغل التنفيذي والبحث الوظيفي"},
+      {time:"العصر",t:"صلاة + 30 دقيقة عود",d:"تدرّب يومي ثابت، ولو نص ساعة"},
+      {time:"5:00–8:00",t:"أوبر + استماع إنجليزي",d:"أكبر نافذة دخل 🚗🎧"},
+      {time:"المغرب",t:"صلاة + صفحتين قرآن + أذكار المساء",d:"أغلق نهارك مثل ما فتحته"},
+      {time:"العشاء",t:"عائلة — بدون شغل",d:"احضر بجسمك وعقلك، أغلق التطبيقات"},
+      {time:"9:00",t:"إنجليزي 15 د + لينكدإن",d:"مراجعة من تطبيقك + 5 تواصل و3 تفاعل"},
+      {time:"10:00",t:"إغلاق اليوم",d:"راجع، حدّد صخرة الغد، نوم مبكر"}
+    ],
+    end:[
+      {time:"الصباح",t:"صلاة + 4 صفحات قرآن + أذكار الصباح",d:"يوم أهدأ — خذ وقتك مع الورد"},
+      {time:"الضحى",t:"فطور مع العائلة",d:"ابدأ اليوم بدفء"},
+      {time:"بلوك واحد",t:"جلسة أعمق — قصص أو إنجليزي",d:"وقت أطول لشي واحد ينمّيك"},
+      {time:"المساء",t:"أوبر + استماع إنجليزي",d:"دخل خفيف يكفي 🚗🎧"},
+      {time:"المغرب",t:"صلاة + أذكار المساء + عائلة",d:"وقت العائلة استثمار مو ترف"},
+      {time:"الأحد 9م",t:"تخطيط الأسبوع — 30 دقيقة",d:"حدّد صخور الأسبوع الجاي"},
+      {time:"الليل",t:"راحة + نوم مبكر",d:"ابدأ أسبوعك من مركزك"}
+    ]
+  };
+  const HABITS=[
+    {id:"quran",ico:"📖",name:"قرآن (4 صفحات)"},
+    {id:"athkar",ico:"🤲",name:"أذكار الصباح والمساء"},
+    {id:"oud",ico:"🎻",name:"عود (30 دقيقة)"},
+    {id:"english",ico:"🗣️",name:"إنجليزي"},
+    {id:"story",ico:"🎬",name:"بناء القصص"},
+    {id:"sport",ico:"🏃",name:"رياضة / مشي"}
+  ];
+  const APPS=[
+    {id:"uber",name:"أوبر",c:"#E8E3D6"},
+    {id:"bolt",name:"بولت",c:"#5FBE7D"},
+    {id:"indrive",name:"إن درايف",c:"#7FC4C9"},
+    {id:"kaian",name:"كيان",c:"#D89A5A"},
+    {id:"sama",name:"سما تاكسي",c:"#7FA3D8"},
+    {id:"ecoride",name:"إيكو رايد",c:"#9CCB6E"}
+  ];
+  const PAYS=[{id:"cash",name:"كاش"},{id:"network",name:"شبكة"},{id:"app",name:"التطبيق"}];
+  const appName=id=>(APPS.find(a=>a.id===id)||{}).name||id;
+  const appColor=id=>(APPS.find(a=>a.id===id)||{}).c||"#E8E3D6";
+
+  const CIRC=169.6;
+  const AR=s=>String(s).replace(/[0-9]/g,d=>"0123456789"[d]);
+  const WD=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  const MON=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+  const mem={};
+  const store={get(k){try{return localStorage.getItem(k)}catch(e){return mem[k]??null}},
+    set(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}},
+    del(k){try{localStorage.removeItem(k)}catch(e){delete mem[k]}}};
+  const dkey=d=>d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+  const today=()=>dkey(new Date());
+  const modeFor=d=>(d.getDay()===5||d.getDay()===6)?"end":"week";
+  const jget=(k,f)=>{try{return JSON.parse(store.get(k))||f}catch(e){return f}};
+  const round=n=>Math.round(n*100)/100;
+
+  /* ---- today routine ---- */
+  let mode="week";
+  const rkey=()=>"r:"+today()+":"+mode;
+  const loadRoutine=()=>jget(rkey(),{});
+  const saveRoutine=s=>store.set(rkey(),JSON.stringify(s));
+  function renderRoutine(){
+    const list=document.getElementById("list"),st=loadRoutine();list.innerHTML="";
+    ROUTINES[mode].forEach((b,i)=>{
+      const done=!!st[i],el=document.createElement("div");
+      el.className="block"+(done?" done":"");el.setAttribute("role","button");el.tabIndex=0;el.setAttribute("aria-pressed",done);
+      el.innerHTML='<div class="rail"></div><div class="body"><div class="time">'+b.time+'</div><div class="txt"><div class="t">'+b.t+'</div><div class="d">'+b.d+'</div></div><div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6"/></svg></div></div>';
+      const tog=()=>{const s=loadRoutine();s[i]=!s[i];saveRoutine(s);renderRoutine()};
+      el.addEventListener("click",tog);
+      el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}});
+      list.appendChild(el);
+    });
+    const total=ROUTINES[mode].length;let d=0;for(let i=0;i<total;i++)if(st[i])d++;
+    const pct=total?Math.round(d/total*100):0;
+    document.getElementById("ringFill").style.strokeDashoffset=CIRC*(1-pct/100);
+    document.getElementById("ringPct").textContent=AR(pct)+"%";
+  }
+  window.setMode=function(m){mode=m;
+    document.getElementById("tabWeek").classList.toggle("active",m==="week");
+    document.getElementById("tabEnd").classList.toggle("active",m==="end");
+    document.getElementById("dayType").textContent=m==="week"?"هدف الدخل 300 ريال":"يوم أخف • عائلة وتطوير";
+    renderRoutine();};
+  window.resetDay=function(){store.del(rkey());renderRoutine()};
+
+  /* ---- brain dump ---- */
+  const dumpKey="dump";
+  function renderDump(){
+    const arr=jget(dumpKey,[]),el=document.getElementById("dumpList");
+    if(!arr.length){el.innerHTML='<div class="empty">راسك فاضي 👌</div>';return;}
+    el.innerHTML="";
+    arr.forEach((it,i)=>{const d=document.createElement("div");d.className="dump-item";
+      d.innerHTML='<span></span><button aria-label="حذف">×</button>';
+      d.querySelector("span").textContent=it;
+      d.querySelector("button").onclick=()=>{const a=jget(dumpKey,[]);a.splice(i,1);store.set(dumpKey,JSON.stringify(a));renderDump()};
+      el.appendChild(d);});
+  }
+  window.addDump=function(){const inp=document.getElementById("dumpInput"),v=inp.value.trim();if(!v)return;
+    const a=jget(dumpKey,[]);a.push(v);store.set(dumpKey,JSON.stringify(a));inp.value="";renderDump();};
+  document.getElementById("dumpInput").addEventListener("keydown",e=>{if(e.key==="Enter")addDump()});
+
+  /* ---- focus timer ---- */
+  let tWork=25,tBreak=5,tRemain=25*60,tOn=false,tBreakMode=false,tInt=null;
+  const pomoKey=k=>"pomo:"+k;
+  function fmt(s){const m=Math.floor(s/60),ss=s%60;return AR((m<10?"0":"")+m+":"+(ss<10?"0":"")+ss)}
+  function drawTimer(){
+    const disp=document.getElementById("timerDisp");disp.textContent=fmt(tRemain);disp.classList.toggle("break",tBreakMode);
+    document.getElementById("timerLbl").textContent=tOn?(tBreakMode?"راحة":"تركيز…"):(tBreakMode?"راحة":"جاهز للبدء");
+    document.getElementById("btnStart").textContent=tOn?"إيقاف":"ابدأ";
+    document.getElementById("pomoCount").textContent=AR(store.get(pomoKey(today()))||0);
+  }
+  window.setPreset=function(btn,w,b){document.querySelectorAll(".t-presets button").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");tWork=w;tBreak=b;if(!tOn){tBreakMode=false;tRemain=w*60;drawTimer()}};
+  window.toggleTimer=function(){tOn?pauseTimer():startTimer()};
+  function startTimer(){tOn=true;tInt=setInterval(()=>{tRemain--;
+    if(tRemain<=0){if(!tBreakMode){const c=(parseInt(store.get(pomoKey(today()))||0)+1);store.set(pomoKey(today()),c);tBreakMode=true;tRemain=tBreak*60;}
+      else{tBreakMode=false;tRemain=tWork*60;}try{navigator.vibrate&&navigator.vibrate(400)}catch(e){}}
+    drawTimer();},1000);drawTimer();}
+  function pauseTimer(){tOn=false;clearInterval(tInt);drawTimer()}
+  window.resetTimer=function(){tOn=false;clearInterval(tInt);tBreakMode=false;tRemain=tWork*60;drawTimer()};
+
+  /* ---- habits ---- */
+  const habMap=k=>jget("hab:"+k,{});
+  function streak(id){let n=0,d=new Date();if(!habMap(today())[id])d.setDate(d.getDate()-1);
+    for(;;){if(habMap(dkey(d))[id]){n++;d.setDate(d.getDate()-1)}else break;}return n;}
+  function renderHabits(){
+    const el=document.getElementById("habitList");el.innerHTML="";
+    HABITS.forEach(h=>{const doneToday=!!habMap(today())[h.id],s=streak(h.id);
+      const row=document.createElement("div");row.className="habit"+(doneToday?" today":"");
+      let dots="";for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dots+='<i class="'+(habMap(dkey(d))[h.id]?"on":"")+'"></i>';}
+      row.innerHTML='<div class="ico">'+h.ico+'</div><div class="hmain"><div class="hname">'+h.name+'</div><div class="week">'+dots+'</div></div><div class="streak">'+(s?AR(s)+"🔥":"—")+'</div><div class="mark"></div>';
+      row.onclick=()=>{const k=today(),m=habMap(k);m[h.id]=!m[h.id];store.set("hab:"+k,JSON.stringify(m));renderHabits()};
+      el.appendChild(row);});
+  }
+
+  /* ---- income / trips ---- */
+  let selDate=new Date();
+  let fApp=null,fPay="cash";
+  const tripsKey=k=>"trips:"+k;
+  const tripsFor=k=>jget(tripsKey(k),[]);
+  const dayIncome=k=>tripsFor(k).reduce((s,t)=>s+(+t.amount||0),0);
+  function targetFor(d){return modeFor(d)==="end"?150:300}
+
+  function relLabel(d){
+    const a=new Date(d);a.setHours(0,0,0,0);const b=new Date();b.setHours(0,0,0,0);
+    const diff=Math.round((a-b)/86400000);
+    if(diff===0)return"اليوم";if(diff===-1)return"أمس";if(diff===1)return"غدًا";
+    return WD[d.getDay()]+" "+AR(d.getDate())+" "+MON[d.getMonth()];
+  }
+  window.shiftDay=function(n){selDate.setDate(selDate.getDate()+n);renderIncome();closeTripForm();};
+  window.goToday=function(){selDate=new Date();renderIncome();closeTripForm();};
+
+  window.openTripForm=function(){
+    fApp=null;fPay="cash";
+    document.getElementById("tAmount").value="";
+    document.getElementById("tCash").value="";
+    document.getElementById("tApp").value="";
+    document.getElementById("tKm").value="";
+    document.getElementById("tripErr").textContent="";
+    document.getElementById("splitBox").classList.add("hidden");
+    document.getElementById("amountBox").classList.remove("hidden");
+    renderChips();
+    document.getElementById("tripForm").classList.remove("hidden");
+    document.getElementById("tripForm").scrollIntoView({behavior:"smooth",block:"center"});
+  };
+  window.closeTripForm=function(){document.getElementById("tripForm").classList.add("hidden");};
+
+  function renderChips(){
+    const ac=document.getElementById("appChips");ac.innerHTML="";
+    APPS.forEach(a=>{const b=document.createElement("button");b.textContent=a.name;
+      if(fApp===a.id)b.className="sel";
+      b.onclick=()=>{fApp=a.id;if(fApp!=="uber"&&fPay==="split"){fPay="cash";togglePayUI();}renderChips();};
+      ac.appendChild(b);});
+    const pc=document.getElementById("payChips");pc.innerHTML="";
+    const opts=PAYS.slice();if(fApp==="uber")opts.push({id:"split",name:"مقسوم (كاش+تطبيق)"});
+    opts.forEach(p=>{const b=document.createElement("button");b.textContent=p.name;
+      if(fPay===p.id)b.className="sel";
+      b.onclick=()=>{fPay=p.id;togglePayUI();renderChips();};
+      pc.appendChild(b);});
+  }
+  function togglePayUI(){
+    const split=fPay==="split";
+    document.getElementById("splitBox").classList.toggle("hidden",!split);
+    document.getElementById("amountBox").classList.toggle("hidden",split);
+  }
+
+  window.saveTrip=function(){
+    const err=document.getElementById("tripErr");
+    if(!fApp){err.textContent="اختر التطبيق أول";return;}
+    const km=round(+document.getElementById("tKm").value||0);
+    let amount=0,cash=0,net=0,appAmt=0;
+    if(fPay==="split"){
+      cash=round(+document.getElementById("tCash").value||0);
+      appAmt=round(+document.getElementById("tApp").value||0);
+      amount=round(cash+appAmt);
+      if(amount<=0){err.textContent="أدخل مبلغ الكاش أو التطبيق";return;}
+    }else{
+      amount=round(+document.getElementById("tAmount").value||0);
+      if(amount<=0){err.textContent="أدخل مبلغ الرحلة";return;}
+      if(fPay==="cash")cash=amount;else if(fPay==="network")net=amount;else appAmt=amount;
+    }
+    const arr=tripsFor(dkey(selDate));
+    arr.push({id:Date.now(),app:fApp,amount:amount,km:km,pay:fPay,cash:cash,net:net,appAmt:appAmt});
+    store.set(tripsKey(dkey(selDate)),JSON.stringify(arr));
+    closeTripForm();renderIncome();
+  };
+
+  function payText(t){
+    if(t.pay==="cash")return"كاش";
+    if(t.pay==="network")return"شبكة";
+    if(t.pay==="app")return"عبر التطبيق";
+    return"مقسوم: "+AR(t.cash)+" كاش + "+AR(t.appAmt)+" تطبيق";
+  }
+  function renderTripList(){
+    const arr=tripsFor(dkey(selDate)),el=document.getElementById("tripList");
+    if(!arr.length){el.innerHTML='<div class="card empty">ما فيه رحلات مسجّلة لهذا اليوم بعد.</div>';return;}
+    el.innerHTML="";
+    arr.slice().reverse().forEach(t=>{
+      const row=document.createElement("div");row.className="trip";
+      row.innerHTML='<div class="app" style="color:'+appColor(t.app)+';background:'+appColor(t.app)+'1f;border:1px solid '+appColor(t.app)+'55">'+appName(t.app)+
+        '</div><div class="tinfo"><div class="tamt">'+AR(t.amount)+' ريال</div><div class="tmeta">'+AR(t.km)+' كم · '+payText(t)+'</div></div><button class="del" aria-label="حذف">×</button>';
+      row.querySelector(".del").onclick=()=>{const a=tripsFor(dkey(selDate)).filter(x=>x.id!==t.id);store.set(tripsKey(dkey(selDate)),JSON.stringify(a));renderIncome();};
+      el.appendChild(row);
+    });
+  }
+
+  function renderIncome(){
+    document.getElementById("selDateLbl").textContent=relLabel(selDate);
+    document.getElementById("todayJump").classList.toggle("hidden",dkey(selDate)===today());
+    const arr=tripsFor(dkey(selDate));
+    const total=arr.reduce((s,t)=>s+(+t.amount||0),0);
+    const km=arr.reduce((s,t)=>s+(+t.km||0),0);
+    const cash=arr.reduce((s,t)=>s+(+t.cash||0),0);
+    const net=arr.reduce((s,t)=>s+(+t.net||0),0);
+    const app=arr.reduce((s,t)=>s+(+t.appAmt||0),0);
+    const tgt=targetFor(selDate),pct=tgt?Math.min(100,Math.round(total/tgt*100)):0;
+    document.getElementById("dayTotal").textContent=AR(round(total));
+    document.getElementById("dayTripsCount").textContent=AR(arr.length)+" رحلة";
+    document.getElementById("dayKm").textContent=AR(round(km))+" كم";
+    const bar=document.getElementById("incBar");bar.style.width=pct+"%";
+    bar.style.background=total>=tgt?"linear-gradient(90deg,var(--done),#7fa06e)":"linear-gradient(90deg,var(--gold-deep),var(--gold))";
+    document.getElementById("incPct").textContent=AR(pct)+"% من الهدف";
+    document.getElementById("incTarget").textContent="الهدف: "+AR(tgt)+" ريال";
+    document.getElementById("brkCash").textContent=AR(round(cash));
+    document.getElementById("brkNet").textContent=AR(round(net));
+    document.getElementById("brkApp").textContent=AR(round(app));
+    renderTripList();
+    // last 7 days ending at selDate
+    const bars=document.getElementById("incBars");bars.innerHTML="";
+    const vals=[];for(let i=6;i>=0;i--){const d=new Date(selDate);d.setDate(d.getDate()-i);vals.push({d,v:dayIncome(dkey(d))});}
+    const mx=Math.max(300,...vals.map(x=>x.v));
+    vals.forEach(x=>{const isSel=dkey(x.d)===dkey(selDate);const b=document.createElement("div");b.className="daybar"+(isSel?" today":"");
+      b.innerHTML='<div class="col"><i style="height:'+(x.v/mx*100)+'%"></i></div><div class="lbl">'+WD[x.d.getDay()].slice(0,3)+'</div>';bars.appendChild(b);});
+  }
+
+  /* ---- week review ---- */
+  function renderWeek(){
+    const bars=document.getElementById("weekBars");bars.innerHTML="";
+    let sumPct=0,days=0,pomoSum=0,incSum=0,tripSum=0;
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);
+      const m=modeFor(d),st=jget("r:"+dkey(d)+":"+m,{}),total=ROUTINES[m].length;let done=0;
+      for(let j=0;j<total;j++)if(st[j])done++;const pct=Math.round(done/total*100);sumPct+=pct;days++;
+      pomoSum+=parseInt(store.get("pomo:"+dkey(d))||0);
+      const tr=tripsFor(dkey(d));tripSum+=tr.length;incSum+=tr.reduce((s,t)=>s+(+t.amount||0),0);
+      const isT=dkey(d)===today();const b=document.createElement("div");b.className="daybar"+(isT?" today":"");
+      b.innerHTML='<div class="col"><i style="height:'+pct+'%"></i></div><div class="lbl">'+WD[d.getDay()].slice(0,3)+'</div>';bars.appendChild(b);}
+    document.getElementById("avgAdh").textContent=AR(Math.round(sumPct/days))+"%";
+    document.getElementById("wkInc2").textContent=AR(round(incSum))+" ريال";
+    document.getElementById("wkTrips").textContent=AR(tripSum)+" رحلة";
+    document.getElementById("wkPomo").textContent=AR(pomoSum)+" جلسة";
+    const ss=document.getElementById("streakSummary");ss.innerHTML="";
+    HABITS.forEach(h=>{const s=streak(h.id);const r=document.createElement("div");r.className="stat-row";
+      r.innerHTML='<span>'+h.ico+' '+h.name+'</span><span class="v">'+(s?AR(s)+" يوم 🔥":"—")+'</span>';ss.appendChild(r);});
+  }
+
+  /* ---- nav ---- */
+  window.nav=function(v){
+    ["today","focus","habits","income","week"].forEach(x=>document.getElementById("view-"+x).classList.toggle("hidden",x!==v));
+    document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.v===v));
+    if(v==="habits")renderHabits();
+    if(v==="income")renderIncome();
+    if(v==="week")renderWeek();
+    if(v==="focus")drawTimer();
+    window.scrollTo(0,0);
+  };
+
+  /* ---- init ---- */
+  document.getElementById("dateLabel").textContent=(function(){
+    try{return new Intl.DateTimeFormat("ar-SA",{weekday:"long",day:"numeric",month:"long"}).format(new Date())}
+    catch(e){return WD[new Date().getDay()]}})();
+  const rockInp=document.getElementById("rock");
+  rockInp.value=store.get("rock:"+today())||"";
+  rockInp.addEventListener("input",()=>store.set("rock:"+today(),rockInp.value));
+  setMode(modeFor(new Date()));
+  renderDump();drawTimer();
+})();
+</script>
+</body>
+</html>
