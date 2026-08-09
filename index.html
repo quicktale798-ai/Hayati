@@ -170,6 +170,55 @@
   nav button .ni{font-size:1.25rem;line-height:1}
   nav button.active{color:var(--gold-soft)}
 
+  /* ---- responsive: tablets & unfolded foldables (Galaxy Z Fold) ---- */
+  @media (min-width:640px){
+    body{max-width:680px}
+    nav{max-width:680px}
+  }
+  @media (min-width:820px){
+    body{max-width:1000px;padding-bottom:104px}
+    nav{max-width:1000px}
+    .wrap{padding:28px 26px 24px}
+    /* long lists flow into two columns to use the wide inner screen */
+    #list{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+    #habitList{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+    #habitList .habit{margin-bottom:0}
+    #tripList{display:grid;grid-template-columns:1fr 1fr;gap:9px 20px}
+    #tripList .trip{margin-bottom:0}
+    #tripList .card.empty{grid-column:1/-1}
+    /* week review: cards two per row */
+    #view-week{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;align-items:start}
+    #view-week>.view-title{grid-column:1/-1}
+    /* focus timer stays centered, not stretched */
+    #view-focus{max-width:600px;margin:0 auto}
+    /* income summary + weekly chart side by side */
+    #view-income{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;align-items:start}
+    #view-income>.view-title,#view-income>.daynav,#view-income>.add-trip,
+    #view-income>#tripForm,#view-income>#tripList{grid-column:1/-1}
+  }
+  /* fold-responsive */
+  @media (min-width:680px){
+    body{max-width:940px}
+    nav{max-width:940px}
+    .wrap{padding:26px 26px 24px}
+    #list,#habitList,#tripList{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+    #view-focus .card:first-of-type{max-width:480px;margin-left:auto;margin-right:auto}
+    .summary{max-width:520px}
+    #tripForm{max-width:560px}
+    .add-trip{max-width:560px}
+  }
+  @media (min-width:1040px){
+    body{max-width:1080px}
+    nav{max-width:1080px}
+    #list{grid-template-columns:1fr 1fr 1fr}
+    #habitList,#tripList{grid-template-columns:1fr 1fr 1fr}
+  }
+  /* foldable hinge awareness (progressive) */
+  @media (horizontal-viewport-segments:2){
+    body{max-width:100%}
+    .wrap{padding-left:max(26px,env(viewport-segment-width 0 0,26px));}
+  }
+
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
