@@ -202,9 +202,7 @@
   body.wide .wrap{padding:26px 26px 24px}
   body.wide #list,body.wide #habitList,body.wide #tripList{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
   body.wide #view-focus .card:first-of-type{max-width:480px;margin-left:auto;margin-right:auto}
-  body.wide .summary{max-width:520px}
-  body.wide #tripForm{max-width:560px}
-  body.wide .add-trip{max-width:560px}
+  body.wide .summary,body.wide #tripForm,body.wide .add-trip{max-width:none;width:100%}
   body.xwide{max-width:1080px}
   body.xwide nav{max-width:1080px}
   body.xwide #list{grid-template-columns:1fr 1fr 1fr}
@@ -662,6 +660,8 @@
   window.addEventListener('orientationchange',function(){setTimeout(applyWide,60);setTimeout(applyWide,300);});
   if(window.visualViewport){window.visualViewport.addEventListener('resize',applyWide);}
   window.addEventListener('load',function(){applyWide();setTimeout(applyWide,150);setTimeout(applyWide,500);setTimeout(applyWide,1200);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){applyWide();setTimeout(applyWide,80);}});
+  window.addEventListener('pageshow',function(){applyWide();setTimeout(applyWide,80);});
 })();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
